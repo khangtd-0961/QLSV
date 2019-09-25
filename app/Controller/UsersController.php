@@ -8,20 +8,20 @@ class UsersController extends AppController {
     //     parent::beforeFilter();
     //     $this->Auth->allow('add');
     // }
-    public function parentNode() {
-        if (!$this->id && empty($this->data)) {
-            return null;
-        }
-        if (isset($this->data['User']['group_id'])) {
-            $groupId = $this->data['User']['group_id'];
-        } else {
-            $groupId = $this->field('group_id');
-        }
-        if (!$groupId) {
-            return null;
-        }
-        return array('Group' => array('id' => $groupId));
-    }
+    // public function parentNode() {
+    //     if (!$this->id && empty($this->data)) {
+    //         return null;
+    //     }
+    //     if (isset($this->data['User']['group_id'])) {
+    //         $groupId = $this->data['User']['group_id'];
+    //     } else {
+    //         $groupId = $this->field('group_id');
+    //     }
+    //     if (!$groupId) {
+    //         return null;
+    //     }
+    //     return array('Group' => array('id' => $groupId));
+    // }
     public function index() {
         $this->User->recursive = 0;
         $this->set('users', $this->paginate());
@@ -30,7 +30,7 @@ class UsersController extends AppController {
     public function view($id = null) {
         $this->User->id = $id;
         if (!$this->User->exists()) {
-            throw new NotFoundException(__('Invalid user'));
+            throw new NotFoundException(__('Invalid user'));    
         }
         $this->set('user', $this->User->findById($id));
     }
@@ -93,8 +93,8 @@ class UsersController extends AppController {
     
     public function login() {
         if ($this->request->is('post')) {
-            if ($this->Auth->login()) {
-                return $this->redirect($this->Auth->redirect());
+            if ($this->Auth->login($this->request->data)) {
+                return $this->redirect(array('controller'=> 'users', 'action' => 'index'));
             }
             $this->Flash->error(__('Invalid username or password, try again'));
         }
